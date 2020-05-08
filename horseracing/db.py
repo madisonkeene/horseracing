@@ -1,8 +1,9 @@
-import sqlite3
-
 import click
 from flask import current_app, g
 from flask.cli import with_appcontext
+import sqlite3
+
+from horseracing.data_loading import loadRaceInfo, loadAdminConfig
 
 def init_app(app):
     app.teardown_appcontext(close_db)
@@ -31,6 +32,9 @@ def init_db():
 
     with current_app.open_resource('schema.sql') as f:
         db.executescript(f.read().decode('utf8'))
+
+    loadRaceInfo("config/racenight.json", db)
+    loadAdminConfig("config/config.example.json", db)
 
 
 @click.command('init-db')
