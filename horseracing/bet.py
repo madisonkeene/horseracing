@@ -37,10 +37,10 @@ def bet():
             db.execute(
                 'UPDATE user SET amount = ? WHERE id = ?', (amount, g.user['id'])
             )
-
             db.commit()
+
             # TODO(madisonfl): Update the redirect
-            return redirect(url_for('leaderboard'))
+            return redirect(url_for('race.race', race_id=h['race_id']))
 
         flash(error)
 
