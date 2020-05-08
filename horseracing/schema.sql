@@ -12,7 +12,7 @@ CREATE TABLE user (
 CREATE TABLE admin (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
+    password TEXT NOT NULL
 );
 
 CREATE TABLE horse (
@@ -44,4 +44,4 @@ CREATE TABLE bet (
     FOREIGN KEY (horse_id) REFERENCES horse (id),
     FOREIGN KEY (race_id) REFERENCES race (id),
     FOREIGN KEY (user_id) REFERENCES user (id)
-)
+);

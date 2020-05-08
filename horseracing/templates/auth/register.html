@@ -1,0 +1,13 @@
+{% extends 'auth/base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Register{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <form class="form-signin" method="post">
+        <label for="username" class="sr-only">Username</label>
+        <input id="username" name="username" class="form-control mb-3" placeholder="Username" required autofocus>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+  </form>
+{% endblock %}
