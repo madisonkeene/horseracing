@@ -8,7 +8,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_race.css') }}">
     <title>{% block title %}{% endblock %} - Horse Racing</title>
   </head>
   <body>
@@ -40,10 +40,6 @@
       <main role="main" class="container">
           <div class="starter-template">
               {% block header %}{% endblock %}
-
-              {% for message in get_flashed_messages() %}
-                 <div class="alert alert-danger" role="alert">{{ message }}</div>
-              {% endfor %}
 
               {% block content %}{% endblock %}
 

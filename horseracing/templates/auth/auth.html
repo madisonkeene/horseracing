@@ -1,0 +1,14 @@
+{% extends 'auth/base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Horse Racing Night{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <form class="form-signin" action="/auth/register">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+    </form>
+    <form class="form-signin" action="/auth/login">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+    </form>
+{% endblock %}

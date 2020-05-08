@@ -8,6 +8,10 @@ from horseracing.db import get_db
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
+@bp.route('/', methods=('GET',))
+def authindex():
+    return render_template('auth/auth.html')
+
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':
@@ -29,7 +33,7 @@ def register():
             )
             db.commit()
             return redirect(url_for('auth.login'))
-
+        # TODO(madison): Do the HTML for this.
         flash(error)
 
     return render_template('auth/register.html')
@@ -65,7 +69,7 @@ def user_login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('authindex'))
 
         return view(**kwargs)
 

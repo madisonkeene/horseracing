@@ -1,0 +1,18 @@
+{% extends 'bet/base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Place a Bet{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <p>Horse {{ horse['number'] }}: {{ horse['name'] }}<br>Odds: {{ horse['odds'] }}<br></p>
+    <form class="form-bet" method="post">
+        <label for="amount" class="sr-only">Amount</label>
+        <input id="amount" name="amount" class="form-control mb-3" placeholder="Amount" required autofocus>
+
+        <label class="form-check-label" for="eachway">Each way</label>
+        <input type="checkbox" name="eachway" class="form-check-input" id="eachway">
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sumbit</button>
+    </form>
+{% endblock %}

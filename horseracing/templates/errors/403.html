@@ -1,0 +1,15 @@
+{% extends 'errors/base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Permission Denied{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <div class="alert alert-danger" role="alert">You are not logged in</div>
+    <form class="form-signin" action="/auth/register">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+    </form>
+    <form class="form-signin" action="/auth/login">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'race/base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Race {{ race['number'] }}{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <div id="raceinfo">
+        <p>Name: {{ race['name'] }}<br>
+            Venue: {{ race['venue'] }}<br>
+            Distance: {{ race['distance'] }}<br>
+            Type: {{ race['type'] }}<br>
+            Field: {{ race['field'] }}</p>
+    </div>
+
+    <div id="horseinfo">
+        <table class="table">
+            <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Odds</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for horse in horses %}
+                    <tr>
+                        <th scope="row">{{ horse['number'] }}</th>
+                        <td>{{ horse['name'] }}</td>
+                        <td>{{ horse['odds'] }}</td>
+                        <td><a class="btn btn-primary" href="/bet?id={{ horse['id'] }}" role="button">Link</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, g, redirect, url_for, render_template
 import os
 
 def create_app(test_config=None):
@@ -22,15 +22,35 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # a simple page that says hello
-    @app.route('/')
-    def hello():
-        return 'Hello, World!'
-
     from . import db
     db.init_app(app)
 
     from . import auth
     app.register_blueprint(auth.bp)
+    app.add_url_rule('/auth', endpoint='authindex')
+
+    from . import race
+    app.register_blueprint(race.bp)
+
+    from . import bet
+    app.register_blueprint(bet.bp)
+
+    from . import leaderboard
+    app.register_blueprint(leaderboard.bp)
+    app.add_url_rule('/leaderboard', endpoint='leaderboard')
+
+    @app.route('/')
+    def index():
+        if g.user == None:
+            return redirect(url_for('authindex'))
+        return redirect(url_for('leaderboard'))
+
+    @app.errorhandler(404)
+    def page_not_found(error):
+        return render_template('errors/404.html'), 404
+
+    @app.errorhandler(403)
+    def permission_denied(error):
+        return render_template('errors/403.html'), 403
 
     return app
