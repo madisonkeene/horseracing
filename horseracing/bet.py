@@ -44,8 +44,8 @@ def bet():
         if not amount:
             error = 'Amount is required.'
 
-        amount = g.user['amount'] - resolveStake(float(amount), eachway)
-        if amount < 0:
+        new_wallet = g.user['amount'] - resolveStake(float(amount), eachway)
+        if new_wallet < 0:
             error = "You don't have enough money for this bet"
 
         if error is None:
@@ -55,7 +55,7 @@ def bet():
             )
 
             db.execute(
-                'UPDATE user SET amount = ? WHERE id = ?', (amount, g.user['id'])
+                'UPDATE user SET amount = ? WHERE id = ?', (new_wallet, g.user['id'])
             )
             db.commit()
 
@@ -78,8 +78,13 @@ def delete_bet(bet_id):
     if bet['user_id'] != g.user['id']:
         abort(403)
 
+    amount = g.user['amount'] + resolveStake(float(bet['amount']), bet['each_way'])
+
     db.execute(
         'DELETE FROM bet WHERE id = ?', (bet['id'],)
+    )
+    db.execute(
+        'UPDATE user SET amount = ? WHERE id = ?', (amount, g.user['id'])
     )
     db.commit()
 
