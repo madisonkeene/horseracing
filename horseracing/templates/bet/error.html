@@ -1,0 +1,12 @@
+{% extends 'bet/base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Error placing bet{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <h3>{{ message }}</h3>
+    <form class="form-signin" action="/">
+        <a class="btn btn-primary" href="/" role="button">Home</a>
+    </form>
+{% endblock %}

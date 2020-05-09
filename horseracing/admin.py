@@ -50,9 +50,9 @@ def admin_index():
 def get_race_state(form_state):
     if form_state == "Start":
         return RaceState.OPEN
-    elif form_state == "Closed":
+    elif form_state == "Close":
         return RaceState.CLOSED
-    elif request.form['race_state'] == "Not yet started":
+    elif form_state == "Not yet started":
         return RaceState.NOT_YET_OPEN
 
 def modify_race_state(race_id, state, db):
@@ -121,7 +121,7 @@ def add_results(race_number):
         try:
             for place, hnum in horse_numbers.items():
                 hse = db.execute(
-                    'SELECT * FROM horse WHERE number = ?', (hnum,)
+                    'SELECT * FROM horse WHERE number = ? AND race_id = ?', (hnum, r['id'])
                 ).fetchone()
                 db.execute(
                     'INSERT INTO result (horse_id, race_id, place) VALUES (?, ?, ?)',
@@ -131,7 +131,7 @@ def add_results(race_number):
         except sqlite3.Error as e:
             return render_template('admin/failure.html', message="Failed to add results: %s" % e)
 
-        err = calculate_bets(r['id'])
+        err = calculate_and_store_bets(r['id'])
         if err is not None:
             return err
 
@@ -139,7 +139,7 @@ def add_results(race_number):
 
     return render_template('admin/add_results.html', race_number=r['number'] , horses=h)
 
-def calculate_bets(race_id):
+def calculate_and_store_bets(race_id):
     db = get_db()
 
     bets = db.execute(
@@ -160,13 +160,23 @@ def calculate_bets(race_id):
             # calculate bet + store
             total_stake = resolveStake(bet['amount'], bet['each_way'])
             calc = resolveBetValue(result['place'],total_stake,result['horseodds'],bet['each_way'])
-            to_store[bet['id']] = calc
+            to_store[bet['id']] = (calc, bet['user_id'])
 
     try:
         for id, val in to_store.items():
             db.execute(
-                'UPDATE bet SET amount_won = ? WHERE id = ?', (val, id)
+                'UPDATE bet SET amount_won = ? WHERE id = ?', (val[0], id)
             )
+            wallet = db.execute(
+                'SELECT user.amount FROM user WHERE id = ?', (val[1],)
+            ).fetchone()
+
+            new_wallet = wallet['amount'] + val[0]
+
+            db.execute(
+                'UPDATE user SET amount = ? WHERE id = ?', (new_wallet, val[1])
+            )
+
         db.commit()
     except sqlite3.Error as e:
         return render_template('admin/failure.html', message="Failed to update bets: %s" % e)
