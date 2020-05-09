@@ -25,12 +25,14 @@ def create_app(test_config=None):
     from . import db
     db.init_app(app)
 
+    # Register blueprints
     from . import auth
     app.register_blueprint(auth.bp)
-    app.add_url_rule('/auth', endpoint='authindex')
+    app.add_url_rule('/auth', endpoint='auth_index')
 
-    from . import race
-    app.register_blueprint(race.bp)
+    from . import admin
+    app.register_blueprint(admin.bp)
+    app.add_url_rule('/admin', endpoint='admin.login')
 
     from . import bet
     app.register_blueprint(bet.bp)
@@ -39,12 +41,17 @@ def create_app(test_config=None):
     app.register_blueprint(leaderboard.bp)
     app.add_url_rule('/leaderboard', endpoint='leaderboard')
 
+    from . import race
+    app.register_blueprint(race.bp)
+
+    # Home page
     @app.route('/')
     def index():
         if g.user == None:
-            return redirect(url_for('authindex'))
+            return redirect(url_for('auth_index'))
         return redirect(url_for('leaderboard'))
 
+    # Error handlers
     @app.errorhandler(404)
     def page_not_found(error):
         return render_template('errors/404.html'), 404

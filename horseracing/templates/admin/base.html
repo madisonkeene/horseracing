@@ -8,7 +8,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style_race.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>{% block title %}{% endblock %} - Horse Racing</title>
   </head>
   <body>
@@ -19,19 +19,16 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarsExampleDefault">
               <ul class="navbar-nav ml-auto">
-                  {% if g.user %}
+                  {% if g.admin %}
                       <li class="nav-item">
-                          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">{{ g.user['username'] }}</a>
+                          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Admin: {{ g.admin['username'] }}</a>
                       </li>
                       <li class="nav-item">
-                          <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+                          <a class="nav-link" href="{{ url_for('admin.logout') }}">Logout</a>
                       </li>
                   {% else %}
                       <li class="nav-item">
-                          <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
-                      </li>
-                      <li class="nav-item">
-                          <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                          <a class="nav-link" href="{{ url_for('admin.login') }}">Login</a>
                       </li>
                   {% endif %}
             </ul>
@@ -41,11 +38,12 @@
           <div class="starter-template">
               {% block header %}{% endblock %}
 
-              {% block raceinfo %}{% endblock %}
+              {% for message in get_flashed_messages() %}
+                 <div class="alert alert-danger" role="alert">{{ message }}</div>
+              {% endfor %}
 
-              {% block state %}{% endblock %}
+              {% block content %}{% endblock %}
 
-              {% block horseinfo %}{% endblock %}
           </div>
       </main><!-- /.container -->
 

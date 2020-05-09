@@ -32,7 +32,8 @@ CREATE TABLE race (
   venue TEXT NOT NULL,
   distance TEXT NOT NULL,
   type TEXT NOT NULL,
-  field TEXT NOT NULL
+  field TEXT NOT NULL,
+  open INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE bet (

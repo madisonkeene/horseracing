@@ -1,0 +1,15 @@
+{% extends 'admin/base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Admin - Login{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <form class="form-signin" method="post">
+        <label for="username" class="sr-only">Username</label>
+        <input id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+        <label for="password" class="sr-only">Password</label>
+        <input type="password" name="password" class="form-control mb-3" id="password" placeholder="Password">
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+  </form>
+{% endblock %}

@@ -4,7 +4,7 @@
   <h1>{% block title %}Race {{ race['number'] }}{% endblock %}</h1>
 {% endblock %}
 
-{% block content %}
+{% block raceinfo %}
     <div id="raceinfo">
         <p>Name: {{ race['name'] }}<br>
             Venue: {{ race['venue'] }}<br>
@@ -12,14 +12,33 @@
             Type: {{ race['type'] }}<br>
             Field: {{ race['field'] }}</p>
     </div>
+{% endblock %}
 
+{% block state %}
+ {% if race['open'] == race_state.NOT_YET_OPEN.value %}
+    <div class="alert alert-warning" role="alert">
+        This race is not yet open for bets
+    </div>
+ {% elif race['open'] == race_state.CLOSED.value %}
+     <div class="alert alert-danger" role="alert">
+        This race is now closed
+    </div>
+ {% elif race['open'] != race_state.OPEN.value %}
+     <div class="alert alert-danger" role="alert">
+        An unexpected error has occurred: {{ race['open'] }}
+    </div>
+ {% endif %}
+{% endblock %}
+
+{% block horseinfo %}
     <div id="horseinfo">
         <table class="table">
             <thead>
                 <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Odds</th>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Odds</th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
@@ -28,7 +47,11 @@
                         <th scope="row">{{ horse['number'] }}</th>
                         <td>{{ horse['name'] }}</td>
                         <td>{{ horse['odds'] }}</td>
-                        <td><a class="btn btn-primary" href="/bet?id={{ horse['id'] }}" role="button">Bet</a></td>
+                        {% if race['open'] == race_state.OPEN.value %}
+                            <td><a class="btn btn-primary" href="/bet?id={{ horse['id'] }}" role="button">Bet</a></td>
+                        {% else %}
+                            <td><a class="btn btn-primary disabled" href="/bet?id={{ horse['id'] }}" role="button">Bet</a></td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>
