@@ -1,7 +1,7 @@
 import functools
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, g, redirect, render_template, request, session, url_for, abort
 )
 from horseracing.db import get_db
 
@@ -39,9 +39,28 @@ def bet():
             )
             db.commit()
 
-            # TODO(madisonfl): Update the redirect
             return redirect(url_for('race.race', race_id=h['race_id']))
 
         flash(error)
 
     return render_template('bet/bet.html', horse=h)
+
+@bp.route('/delete/<bet_id>', methods=('GET', 'POST'))
+@user_login_required
+def delete_bet(bet_id):
+    db = get_db()
+
+    bet = db.execute(
+        'SELECT * FROM bet WHERE id = ?', (bet_id,)
+    ).fetchone()
+    race_id = bet['race_id']
+
+    if bet['user_id'] != g.user['id']:
+        abort(403)
+
+    db.execute(
+        'DELETE FROM bet WHERE id = ?', (bet['id'],)
+    )
+    db.commit()
+
+    return redirect(url_for('race.race', race_id=race_id))

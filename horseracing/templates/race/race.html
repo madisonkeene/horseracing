@@ -58,3 +58,38 @@
         </table>
     </div>
 {% endblock %}
+
+{% block betsinfo %}
+    <div id="betsinfo">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">User</th>
+                    <th scope="col">Horse</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Each Way</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bet in bets %}
+                    <tr>
+                        <td>{{ bet['username'] }}</td>
+                        <td>{{ bet['horsename'] }}</td>
+                        <td>£{{ bet['amount'] }}</td>
+                        {% if bet['each_way'] == 1 %}
+                            <td>Yes</td>
+                        {% else %}
+                            <td>No</td>
+                        {% endif %}
+                        {% if race['open'] == race_state.OPEN.value and bet['user_id'] == g.user['id'] %}
+                            <td><a class="btn btn-primary" href="/bet/delete/{{ bet['id'] }}" role="button">Delete</a></td>
+                        {% else %}
+                            <td></td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
