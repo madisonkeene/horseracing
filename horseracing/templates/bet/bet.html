@@ -45,9 +45,9 @@
                 success: function(data) {
                     console.log(data)
                     if (eachway == true) {
-                        string = "Your bet is worth £" + data.eachWayWin + " for a win, or £" + data.eachWayPlace + " for a place."
+                        string = "Your bet is worth £" + data.eachWayWin.toFixed(2) + " for a win, or £" + data.eachWayPlace.toFixed(2) + " for a place."
                     } else {
-                        string = "Your bet is worth £" + data.singleWin + " if your horse wins."
+                        string = "Your bet is worth £" + data.singleWin.toFixed(2) + " if your horse wins."
                     }
                     $('#betval').text(string);
                 },

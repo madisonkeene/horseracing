@@ -158,8 +158,8 @@ def calculate_and_store_bets(race_id):
         result = get_result_for_horse(bet['horse_id'], results)
         if result:
             # calculate bet + store
-            total_stake = resolveStake(bet['amount'], bet['each_way'])
-            calc = resolveBetValue(result['place'],total_stake,result['horseodds'],bet['each_way'])
+            # total_stake = resolveStake(bet['amount'], bet['each_way'])
+            calc = resolveBetValue(result['place'],bet['amount'],result['horseodds'],bet['each_way'])
             to_store[bet['id']] = (calc, bet['user_id'])
 
     try:

@@ -29,8 +29,8 @@ def resolveBetValue(place,stake,odds,eachWay):
             
         elif place == 2 or place == 3:
             betValue = placeWinnings
-    else:
-        betValue = 0
+        else:
+            betValue = 0
 
     return betValue
             
