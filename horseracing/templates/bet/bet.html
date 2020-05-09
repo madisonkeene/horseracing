@@ -20,9 +20,9 @@
 
 <script type="text/javascript">
     $(function() {
-        $('#amount, #eachway').on('input', function() {
+        const update = function() {
             var string = "";
-            var eachway = $('#betval').is(":checked");
+            var eachway = $('#eachway').is(":checked");
             var stake = $('input[name="amount"]').val();
             var odds = $('#odds').text();
 
@@ -35,31 +35,30 @@
             console.log(odds, stake, eachway);
 
             $.ajax({
-                url: "/previewCalc",
+                url: "/bet/previewCalc",
                 data: {
                     "stake": stake,
-                    "odds": odds,
-                    "eachWay": eachway
+                    "odds": encodeURIComponent(odds)
                 },
                 cache: false,
-                type: "POST",
+                type: "GET",
                 success: function(data) {
-                    var json = $.parseJSON(data);
+                    console.log(data)
                     if (eachway == true) {
-                        string = "Your bet is worth £" + json.eachWayWin + " for a win, or £" + json.eachWayPlace + " for a place."
+                        string = "Your bet is worth £" + data.eachWayWin + " for a win, or £" + data.eachWayPlace + " for a place."
                     } else {
-                        string = "Your bet is worth £" + json.singleWin + " if your horse wins."
+                        string = "Your bet is worth £" + data.singleWin + " if your horse wins."
                     }
+                    $('#betval').text(string);
                 },
                 error: function(xhr) {
                     console.log("Whoops!" + xhr)
 
                 }
             });
-
-
-            $('#betval').text(string);
-        });
+        };
+        $('#amount').on('input', update);
+        $('#eachway').on('change', update);
     });
 </script>
 
