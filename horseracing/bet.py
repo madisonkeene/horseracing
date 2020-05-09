@@ -1,12 +1,17 @@
 import functools
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for, abort
+    Blueprint, flash, g, jsonify, redirect, render_template, request, session, url_for, abort
 )
+
+from urllib.parse import unquote
+
 from horseracing.db import get_db
 from horseracing.math import resolveStake
 from horseracing.auth import user_login_required
 from horseracing.race import RaceState
+
+from horseracing.math import previewCalc
 
 bp = Blueprint('bet', __name__, url_prefix='/bet')
 
@@ -79,3 +84,15 @@ def delete_bet(bet_id):
     db.commit()
 
     return redirect(url_for('race.race', race_id=race_id))
+
+@bp.route('/previewCalc', methods=('GET', 'POST'))
+@user_login_required
+def calculate_preview():
+    stake = request.args.get('stake', 0, type=float)
+    odds = request.args.get('odds', 0, type=str)
+
+    odds = unquote(odds)
+
+    result = previewCalc(stake, odds)
+
+    return result
