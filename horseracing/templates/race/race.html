@@ -45,17 +45,15 @@
             <tbody>
                 {% for horse in horses %}
                     <tr>
-                        <th scope="row">
-                            {% if horse['place'] == -1 %}
-                            <p>-</p>
-                            {% else %}
-                                {{ horse['place'] }}
-                            {% endif %}
-                        </th>
+                        {% if horse['place'] == None %}
+                            <th scope="row">-</th>
+                        {% else %}
+                            <th scope="row">{{ horse['place'] }}</th>
+                        {% endif %}
                         <td>{{ horse['number'] }}</td>
                         <td>{{ horse['name'] }}</td>
                         <td>{{ horse['odds'] }}</td>
-                        {% if race['open'] == race_state.OPEN.value %}
+                        {% if race['open'] == race_state.OPEN.value and g.user['amount'] > 0 %}
                             <td><a class="btn btn-primary" href="/bet?id={{ horse['id'] }}" role="button">Bet</a></td>
                         {% else %}
                             <td><a class="btn btn-primary disabled" href="/bet?id={{ horse['id'] }}" role="button">Bet</a></td>
@@ -93,7 +91,9 @@
                         {% endif %}
 
                         {% if race_finished %}
-                            <td>{{ bet['amount_won'] }}</td>
+                            <td>£{{ bet['amount_won'] }}</td>
+                        {% else %}
+                            <td></td>
                         {% endif %}
 
                         {% if race['open'] == race_state.OPEN.value and bet['user_id'] == g.user['id'] %}
