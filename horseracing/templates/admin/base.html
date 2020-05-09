@@ -18,6 +18,26 @@
               <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+          <ul class="navbar-nav mr-auto">
+            {% if g.admin %}
+              <li class="nav-item">
+                  <a class="nav-link" href="/admin">Admin Home</a>
+              </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Add results
+                    </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="/admin/addresults/1">Race 1</a>
+                            <a class="dropdown-item" href="/admin/addresults/2">Race 2</a>
+                            <a class="dropdown-item" href="/admin/addresults/3">Race 3</a>
+                            <a class="dropdown-item" href="/admin/addresults/4">Race 4</a>
+                            <a class="dropdown-item" href="/admin/addresults/5">Race 5</a>
+                            <a class="dropdown-item" href="/admin/addresults/6">Race 6</a>
+                    </div>
+                </li>
+            {% endif %}
+            </ul>
               <ul class="navbar-nav ml-auto">
                   {% if g.admin %}
                       <li class="nav-item">
