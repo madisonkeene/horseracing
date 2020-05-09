@@ -21,21 +21,44 @@
               <span class="navbar-toggler-icon"></span>
           </button>
         <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+            {% if g.user %}
+              <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('leaderboard.leaderboard') }}">Leaderboard</a>
+              </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Races
+                    </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="/race/1">Race 1</a>
+                            <a class="dropdown-item" href="/race/2">Race 2</a>
+                            <a class="dropdown-item" href="/race/3">Race 3</a>
+                            <a class="dropdown-item" href="/race/4">Race 4</a>
+                            <a class="dropdown-item" href="/race/5">Race 5</a>
+                            <a class="dropdown-item" href="/race/6">Race 6</a>
+                    </div>
+                </li>
+            {% endif %}
+            </ul>
             <ul class="navbar-nav ml-auto">
                 {% if g.user %}
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">{{ g.user['username'] }}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">{{ g.user['username'] }}</a>
+                    </li>
+                    <li class="nav-item">
+                          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">£{{'%0.2f'| format(g.user['amount']|float)}}</a>
+                      </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+                    </li>
                 {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                    </li>
                 {% endif %}
             </ul>
         </div>

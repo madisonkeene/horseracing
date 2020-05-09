@@ -1,0 +1,1 @@
+web: gunicorn horseracing.wsgi --log-file -
