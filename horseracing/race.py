@@ -24,4 +24,8 @@ def race(race_id):
         h = db.execute(
             'SELECT * FROM horse WHERE race_id = ? ORDER BY number ASC', (str(race_id),)
         ).fetchall()
-        return render_template('race/race.html', race=r, horses=h, race_state=RaceState)
+
+        b = db.execute(
+            'SELECT bet.id, bet.amount, bet.each_way, bet.user_id, horse.name AS horsename, user.username FROM bet INNER JOIN user ON user.id = bet.user_id INNER JOIN horse ON horse.id = bet.horse_id WHERE bet.race_id = ? ORDER BY bet.created DESC', (str(race_id),)
+        ).fetchall()
+        return render_template('race/race.html', race=r, horses=h, bets=b, race_state=RaceState)

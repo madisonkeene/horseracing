@@ -1,0 +1,43 @@
+{% block usersinfo %}
+  <div id="usersinfo">
+
+        <form method="post">
+            <label for="usernames">Users:</label>
+            <select class="form-control" name="usernames" id="usernames">
+                {% for user in users %}
+                    <option>{{  user['username'] }}</option>
+                {% endfor %}
+            </select>
+            <label for="user_actions">Action:</label>
+            <select class="form-control" name="user_actions" id="user_actions">
+                <option>Delete</option>
+                <option>Reset amount</option>
+            </select>
+            <button class="btn btn-lg btn-primary btn-block" name="modify_user_state" type="submit">Apply</button>
+        </form>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Created</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <th scope="row">{{ user['id'] }}</th>
+                        <td>{{ user['username'] }}</td>
+                        <td>{{ user['amount'] }}</td>
+                        <td>{{ user['created'] }}</td>
+                        <form name="delete_user" action="post">
+                            <td><button type="button" class="btn btn-primary" name="delete_{{ user['id'] }}">Delete</button></td>
+                        </form>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

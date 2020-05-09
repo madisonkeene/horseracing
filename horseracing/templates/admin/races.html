@@ -1,0 +1,56 @@
+{% block racesinfo %}
+  <div id="racesinfo">
+      <form method="post">
+            <label for="races">Races:</label>
+            <select class="form-control" name="race_number" id="race_numbers">
+                {% for race in races %}
+                    <option>{{  race['number'] }}</option>
+                {% endfor %}
+            </select>
+            <label for="races">State:</label>
+            <select class="form-control" name="race_state" id="race_numbers">
+                <option>Start</option>
+                <option>Close</option>
+                <option>Not yet started</option>
+            </select>
+            <button class="btn btn-lg btn-primary btn-block" name="modify_race_state" type="submit">Apply</button>
+        </form>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Number</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Venue</th>
+                    <th scope="col">Distance</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Field</th>
+                    <th scope="col">Open</th>
+                    <th scope="col">Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for race in races %}
+                    <tr>
+                        <th scope="row">{{ race['number'] }}</th>
+                        <td>{{ race['name'] }}</td>
+                        <td>{{ race['venue'] }}</td>
+                        <td>{{ race['distance'] }}</td>
+                        <td>{{ race['type'] }}</td>
+                        <td>{{ race['field'] }}</td>
+                        {% if race['open'] == 0 %}
+                            <td>Not Started</td>
+                        {% elif race['open'] == 1 %}
+                            <td>Open</td>
+                        {% elif race['open'] == 2 %}
+                            <td>Closed</td>
+                        {% else %}
+                            <td>ERROR</td>
+                        {% endif %}
+                        <td>{{ race['created'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
