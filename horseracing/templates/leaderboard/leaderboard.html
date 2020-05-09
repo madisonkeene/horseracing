@@ -17,7 +17,7 @@
                 {% for user in users %}
                     <tr>
                         <th scope="row">{{ user['username'] }}</th>
-                        <td>£{{ user['amount'] }}</td>
+                        <td>£{{'%0.2f'| format(user['amount']|float)}}</td>
                     </tr>
                 {% endfor %}
             </tbody>

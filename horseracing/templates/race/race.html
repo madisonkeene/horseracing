@@ -83,7 +83,7 @@
                     <tr>
                         <td>{{ bet['username'] }}</td>
                         <td>{{ bet['horsename'] }}</td>
-                        <td>£{{ bet['amount'] }}</td>
+                        <td>£{{'%0.2f'| format(bet['amount']|float)}}</td>
                         {% if bet['each_way'] == 1 %}
                             <td>Yes</td>
                         {% else %}
@@ -91,7 +91,7 @@
                         {% endif %}
 
                         {% if race_finished %}
-                            <td>£{{ bet['amount_won'] }}</td>
+                            <td>£{{'%0.2f'| format(bet['amount_won']|float)}}</td>
                         {% else %}
                             <td></td>
                         {% endif %}
