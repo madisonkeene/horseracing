@@ -1,18 +1,66 @@
-{% extends 'bet/base.html' %}
+{% extends 'bet/base.html' %} {% block header %}
+<h1>{% block title %}Place a Bet{% endblock %}</h1>
+{% endblock %} {% block content %}
+<p>Horse {{ horse['number'] }}: {{ horse['name'] }}<br>Odds: <span id="odds">{{ horse['odds'] }}</span><br></p>
+<form class="form-bet" id="betform" method="post">
+    <label for="amount" class="sr-only">Amount</label>
+    <input id="amount" name="amount" class="form-control mb-3" placeholder="Amount" required autofocus>
 
-{% block header %}
-  <h1>{% block title %}Place a Bet{% endblock %}</h1>
-{% endblock %}
-
-{% block content %}
-    <p>Horse {{ horse['number'] }}: {{ horse['name'] }}<br>Odds: {{ horse['odds'] }}<br></p>
-    <form class="form-bet" method="post">
-        <label for="amount" class="sr-only">Amount</label>
-        <input id="amount" name="amount" class="form-control mb-3" placeholder="Amount" required autofocus>
-
-        <label class="form-check-label" for="eachway">Each way</label>
+    <div class="form-check mb-3">
         <input type="checkbox" name="eachway" class="form-check-input" id="eachway">
+        <label class="form-check-label" for="eachway">Each way</label>
+    </div>
 
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sumbit</button>
-    </form>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sumbit</button>
+
+    <div class="alert alert-info d-none mt-5" id="infobox">
+        <p id="betval"></p>
+    </div>
+</form>
+
+<script type="text/javascript">
+    $(function() {
+        $('#amount, #eachway').on('input', function() {
+            var string = "";
+            var eachway = $('#betval').is(":checked");
+            var stake = $('input[name="amount"]').val();
+            var odds = $('#odds').text();
+
+            if (stake.length > 0) {
+                $('#infobox').removeClass('d-none');
+            } else {
+                $('#infobox').addClass('d-none');
+            }
+
+            console.log(odds, stake, eachway);
+
+            $.ajax({
+                url: "/previewCalc",
+                data: {
+                    "stake": stake,
+                    "odds": odds,
+                    "eachWay": eachway
+                },
+                cache: false,
+                type: "POST",
+                success: function(data) {
+                    var json = $.parseJSON(data);
+                    if (eachway == true) {
+                        string = "Your bet is worth £" + json.eachWayWin + " for a win, or £" + json.eachWayPlace + " for a place."
+                    } else {
+                        string = "Your bet is worth £" + json.singleWin + " if your horse wins."
+                    }
+                },
+                error: function(xhr) {
+                    console.log("Whoops!" + xhr)
+
+                }
+            });
+
+
+            $('#betval').text(string);
+        });
+    });
+</script>
+
 {% endblock %}
