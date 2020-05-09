@@ -3,10 +3,11 @@ import sqlite3
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import check_password_hash
 
 from horseracing.db import get_db
 from horseracing.race import RaceState
+from horseracing.math import resolveBetValue, resolveStake
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -95,6 +96,87 @@ def user_reset_amount(db, username):
         return render_template('admin/failure.html', message="Failed to modify user: %s" % e)
     return render_template('admin/success.html', message="User amount reset: %s" % username)
 
+@bp.route('/addresults/<race_number>', methods=('GET','POST'))
+@admin_login_required
+def add_results(race_number):
+    db = get_db()
+
+    r = db.execute(
+        'SELECT * FROM race WHERE number = ?', (str(race_number),)
+    ).fetchone()
+
+    h = db.execute(
+        'SELECT * FROM horse WHERE race_id = ? ORDER BY number ASC', (r['id'],)
+    ).fetchall()
+
+    if request.method == 'POST':
+        horse_numbers = {1: request.form['horse1'].split(" - ")[0],
+                   2: request.form['horse2'].split(" - ")[0],
+                   3: request.form['horse3'].split(" - ")[0]}
+
+        if len(horse_numbers.values()) > len(set(horse_numbers.values())):
+            return render_template('admin/failure.html', message="Failed to add results: horses not unique")
+
+        # Register results into db.
+        try:
+            for place, hnum in horse_numbers.items():
+                hse = db.execute(
+                    'SELECT * FROM horse WHERE number = ?', (hnum,)
+                ).fetchone()
+                db.execute(
+                    'INSERT INTO result (horse_id, race_id, place) VALUES (?, ?, ?)',
+                    (hse['id'], r['id'], str(place))
+                )
+            db.commit()
+        except sqlite3.Error as e:
+            return render_template('admin/failure.html', message="Failed to add results: %s" % e)
+
+        err = calculate_bets(r['id'])
+        if err is not None:
+            return err
+
+        return render_template('admin/success.html', message="Results added")
+
+    return render_template('admin/add_results.html', race_number=r['number'] , horses=h)
+
+def calculate_bets(race_id):
+    db = get_db()
+
+    bets = db.execute(
+        'SELECT * FROM bet WHERE race_id = ?', (race_id,)
+    ).fetchall()
+
+    # Get the results
+    results = db.execute(
+        'SELECT result.place, result.horse_id, horse.name AS horsename, horse.odds AS horseodds FROM result INNER JOIN horse ON horse.id = result.horse_id WHERE result.race_id = ?', (race_id,)
+    ).fetchall()
+
+    to_store = {}
+
+    for bet in bets:
+        # if the bets horse_id in results
+        result = get_result_for_horse(bet['horse_id'], results)
+        if result:
+            # calculate bet + store
+            total_stake = resolveStake(bet['amount'], bet['each_way'])
+            calc = resolveBetValue(result['place'],total_stake,result['horseodds'],bet['each_way'])
+            to_store[bet['id']] = calc
+
+    try:
+        for id, val in to_store.items():
+            db.execute(
+                'UPDATE bet SET amount_won = ? WHERE id = ?', (val, id)
+            )
+        db.commit()
+    except sqlite3.Error as e:
+        return render_template('admin/failure.html', message="Failed to update bets: %s" % e)
+
+
+def get_result_for_horse(id, results):
+    for result in results:
+        if result['horse_id'] == id:
+            return result
+    return None
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():

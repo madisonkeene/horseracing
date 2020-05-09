@@ -6,6 +6,11 @@ def oddsToDecimal(odds):
     eachWayDecimal = (((numerator / 5) / denominator) + 1)
     return decimal, eachWayDecimal
 
+def resolveStake(stake, eachway):
+    if eachway:
+        return stake * 2
+    return stake
+
 def resolveBetValue(place,stake,odds,eachWay):
     decimal, eachWayDecimal = oddsToDecimal(odds)
     betValue = 0

@@ -22,7 +22,7 @@ def race(race_id):
         ).fetchone()
 
         h = db.execute(
-            'SELECT * FROM horse WHERE race_id = ? ORDER BY number ASC', (str(race_id),)
+            'SELECT * FROM horse WHERE race_id = ? ORDER BY number ASC', (str(r['id']),)
         ).fetchall()
 
         b = db.execute(

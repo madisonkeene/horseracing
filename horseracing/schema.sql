@@ -28,6 +28,16 @@ CREATE TABLE horse (
     FOREIGN KEY (race_id) REFERENCES race (id)
 );
 
+CREATE TABLE result (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    horse_id INTEGER NOT_NULL,
+    race_id INTEGER NOT NULL,
+    place INTEGER NOT NULL DEFAULT -1,
+    created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (race_id) REFERENCES race (id),
+    FOREIGN KEY (horse_id) REFERENCES horse (id)
+);
+
 CREATE TABLE race (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
@@ -47,6 +57,7 @@ CREATE TABLE bet (
     user_id INTEGER NOT NULL,
     amount REAL NOT NULL,
     each_way INTEGER NOT NULL,
+    amount_won REAL DEFAULT 0,
     created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (horse_id) REFERENCES horse (id),
     FOREIGN KEY (race_id) REFERENCES race (id),

@@ -1,0 +1,32 @@
+{% extends 'admin/base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Submit results - Race {{ race_id }}{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<form method="post">
+    <label for="horse1">First Place:</label>
+    <select class="form-control" name="horse1" id="horse1">
+        {% for horse in horses %}
+            <option>{{  horse['number'] }} - {{ horse['name'] }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="horse2">Second Place:</label>
+    <select class="form-control" name="horse2" id="horse2">
+        {% for horse in horses %}
+            <option>{{  horse['number'] }} - {{ horse['name'] }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="horse3">Third Place:</label>
+    <select class="form-control" name="horse3" id="horse3">
+        {% for horse in horses %}
+            <option>{{  horse['number'] }} - {{ horse['name'] }}</option>
+        {% endfor %}
+    </select>
+
+    <button class="btn btn-lg btn-primary btn-block" name="submit_results" type="submit">Apply</button>
+</form>
+{% endblock %}
