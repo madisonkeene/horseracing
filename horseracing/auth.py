@@ -1,6 +1,6 @@
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
 import functools
-import sqlite3
+import psycopg2
 
 from horseracing.db import get_db
 
@@ -14,31 +14,31 @@ def auth_index():
 def register():
     if request.method == 'POST':
         username = request.form['username']
-        db = get_db()
+        db_conn, db_curs = get_db()
         error = None
 
         # Check if user already exists and if so, redirect to login page.
         if not username:
             error = 'Username is required.'
-        elif db.execute(
-            'SELECT id FROM user WHERE username = ?', (username,)
-        ).fetchone() is not None:
+
+        db_curs.execute('SELECT id FROM horseracing_user WHERE username = %s', (username,))
+        exists = db_curs.fetchone()
+        if exists is not None:
             error = 'User {} is already registered. Please log in.'.format(username)
+
+        if error is not None:
             flash(error)
             return redirect(url_for('auth.login'))
 
         # Register user and then log them in.
         try:
-            db.execute(
-                'INSERT INTO user (username) VALUES (?)',
-                ((username,))
-            )
-            db.commit()
-            error = login_user(username, db)
+            db_curs.execute('INSERT INTO horseracing_user (username) VALUES (%s)',((username,)))
+            db_conn.commit()
+            error = login_user(username, db_curs)
             if error is None:
                 return redirect(url_for('index'))
-        except sqlite3.Error as e:
-            error = 'Something went wrong: %s' % e
+        except psycopg2.Error as e:
+            error = 'Something went wrong when doing database transactions: %s', e
 
         flash(error)
 
@@ -48,8 +48,8 @@ def register():
 def login():
     if request.method == 'POST':
         username = request.form['username']
-        db = get_db()
-        error = login_user(username, db)
+        db_conn, db_curs = get_db()
+        error = login_user(username, db_curs)
 
         if error is None:
             return redirect(url_for('index'))
@@ -57,10 +57,9 @@ def login():
 
     return render_template('auth/login.html')
 
-def login_user(username, db):
-    user = db.execute(
-        'SELECT * FROM user WHERE username = ?', (username,)
-    ).fetchone()
+def login_user(username, db_curs):
+    db_curs.execute('SELECT id FROM horseracing_user WHERE username = %s', (username,))
+    user = db_curs.fetchone()
 
     if user is None:
         return 'Incorrect username.'
@@ -91,6 +90,6 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = get_db().execute(
-            'SELECT * FROM user WHERE id = ?', (user_id,)
-        ).fetchone()
+        db_conn, db_curs = get_db()
+        db_curs.execute('SELECT * FROM horseracing_user WHERE id = %s', (user_id,))
+        g.user = db_curs.fetchone()

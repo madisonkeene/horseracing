@@ -13,9 +13,10 @@ bp = Blueprint('leaderboard', __name__, url_prefix='/leaderboard')
 @user_login_required
 def leaderboard():
     if request.method == 'GET':
-        db = get_db()
-        u = db.execute(
-            'SELECT * FROM user ORDER BY amount DESC'
-        ).fetchall()
+        db_conn, db_curs = get_db()
+        db_curs.execute(
+            'SELECT * FROM horseracing_user ORDER BY amount DESC'
+        )
+        u = db_curs.fetchall()
 
     return render_template('leaderboard/leaderboard.html', users=u)

@@ -76,7 +76,7 @@
                 <td>£{{'%0.2f'| format(bet['amount_won']|float)}}</td>
                 {% else %}
                 <td></td>
-                {% endif %} {% if race['open'] == race_state.OPEN.value and bet['user_id'] == g.user['id'] %}
+                {% endif %} {% if race['open'] == race_state.OPEN.value and bet['horseracing_user_id'] == g.user['id'] %}
                 <td><a class="btn btn-primary" href="/bet/delete/{{ bet['id'] }}" role="button">Delete</a></td>
                 {% else %}
                 <td></td>

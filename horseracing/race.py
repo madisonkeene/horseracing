@@ -16,19 +16,22 @@ bp = Blueprint('race', __name__, url_prefix='/race')
 @user_login_required
 def race(race_id):
     closed = False
-    db = get_db()
+    db_conn, db_curs = get_db()
     if request.method == 'GET':
-        r = db.execute(
-            'SELECT * FROM race WHERE number = ?', (str(race_id),)
-        ).fetchone()
+        db_curs.execute(
+            'SELECT * FROM race WHERE number = %s', (str(race_id),)
+        )
+        r = db_curs.fetchone()
 
-        h = db.execute(
-            'SELECT horse.id, horse.name, horse.number, horse.odds, horse.race_id, result.place FROM horse LEFT JOIN result ON result.horse_id = horse.id WHERE horse.race_id = ? ORDER BY result.place is null, result.place, horse.number ASC', (str(r['id']),)
-        ).fetchall()
+        db_curs.execute(
+            'SELECT horse.id, horse.name, horse.number, horse.odds, horse.race_id, result.place FROM horse LEFT JOIN result ON result.horse_id = horse.id WHERE horse.race_id = %s ORDER BY result.place is null, result.place, horse.number ASC', (str(r['id']),)
+        )
+        h = db_curs.fetchall()
 
-        b = db.execute(
-            'SELECT bet.id, bet.amount, bet.each_way, bet.user_id, bet.amount_won, horse.name AS horsename, user.username FROM bet INNER JOIN user ON user.id = bet.user_id INNER JOIN horse ON horse.id = bet.horse_id WHERE bet.race_id = ? ORDER BY bet.created DESC', (str(race_id),)
-        ).fetchall()
+        db_curs.execute(
+            'SELECT bet.id, bet.amount, bet.each_way, bet.horseracing_user_id, bet.amount_won, horse.name AS horsename, horseracing_user.username FROM bet INNER JOIN horseracing_user ON horseracing_user.id = bet.horseracing_user_id INNER JOIN horse ON horse.id = bet.horse_id WHERE bet.race_id = %s ORDER BY bet.created DESC', (str(race_id),)
+        )
+        b = db_curs.fetchall()
 
         if r['open'] == RaceState.CLOSED.value:
             closed = True

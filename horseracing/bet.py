@@ -18,16 +18,18 @@ bp = Blueprint('bet', __name__, url_prefix='/bet')
 @bp.route('/', methods=('GET', 'POST'))
 @user_login_required
 def bet():
-    db = get_db()
+    db_conn, db_curs = get_db()
     horse_id = request.args.get('id', None)
     error = None
-    h = db.execute(
-        'SELECT * FROM horse WHERE id = ?', (horse_id,)
-    ).fetchone()
+    db_curs.execute(
+        'SELECT * FROM horse WHERE id = %s', (horse_id,)
+    )
+    h = db_curs.fetchone()
 
-    r = db.execute(
-        'SELECT * FROM race WHERE id = ?', (h['race_id'],)
-    ).fetchone()
+    db_curs.execute(
+        'SELECT * FROM race WHERE id = %s', (h['race_id'],)
+    )
+    r = db_curs.fetchone()
 
     if r['open'] != RaceState.OPEN.value:
         error ="Race is closed"
@@ -49,15 +51,15 @@ def bet():
             error = "You don't have enough money for this bet"
 
         if error is None:
-            db.execute(
-                'INSERT INTO bet (horse_id, race_id, user_id, amount, each_way) VALUES (?, ?, ?, ?, ?)',
+            db_curs.execute(
+                'INSERT INTO bet (horse_id, race_id, horseracing_user_id, amount, each_way) VALUES (%s, %s, %s, %s, %s)',
                 (horse_id, h['race_id'], g.user['id'], amount, eachway)
             )
 
-            db.execute(
-                'UPDATE user SET amount = ? WHERE id = ?', (new_wallet, g.user['id'])
+            db_curs.execute(
+                'UPDATE horseracing_user SET amount = %s WHERE id = %s', (new_wallet, g.user['id'])
             )
-            db.commit()
+            db_conn.commit()
 
             return redirect(url_for('race.race', race_id=h['race_id']))
 
@@ -68,25 +70,26 @@ def bet():
 @bp.route('/delete/<bet_id>', methods=('GET', 'POST'))
 @user_login_required
 def delete_bet(bet_id):
-    db = get_db()
+    db_conn, db_curs = get_db()
 
-    bet = db.execute(
-        'SELECT * FROM bet WHERE id = ?', (bet_id,)
-    ).fetchone()
+    db_curs.execute(
+        'SELECT * FROM bet WHERE id = %s', (bet_id,)
+    )
+    bet = db_curs.fetchone()
     race_id = bet['race_id']
 
-    if bet['user_id'] != g.user['id']:
+    if bet['horseracing_user_id'] != g.user['id']:
         abort(403)
 
     amount = g.user['amount'] + resolveStake(float(bet['amount']), bet['each_way'])
 
-    db.execute(
-        'DELETE FROM bet WHERE id = ?', (bet['id'],)
+    db_curs.execute(
+        'DELETE FROM bet WHERE id = %s', (bet['id'],)
     )
-    db.execute(
-        'UPDATE user SET amount = ? WHERE id = ?', (amount, g.user['id'])
+    db_curs.execute(
+        'UPDATE horseracing_user SET amount = %s WHERE id = %s', (amount, g.user['id'])
     )
-    db.commit()
+    db_conn.commit()
 
     return redirect(url_for('race.race', race_id=race_id))
 

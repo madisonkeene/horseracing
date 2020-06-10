@@ -39,6 +39,6 @@ class DataLoadingTest(TestCase):
     def test_load_admin_config(self):
         loadAdminConfig("test_files/config.example.json", self.db)
 
-        got = self.c.execute('SELECT id FROM admin WHERE username = \'admin\'').fetchall()
+        got = self.c.execute('SELECT id FROM horseracing_admin WHERE username = \'admin\'').fetchall()
         self.assertNotEqual(None, got)
         self.assertEqual(len(got), 1)

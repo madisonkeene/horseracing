@@ -1,1 +1,1 @@
-web: gunicorn "horseracing:create_app()" --log-file -
+web: gunicorn "horseracing:create_app()"
