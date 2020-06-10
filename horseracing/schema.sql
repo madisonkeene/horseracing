@@ -24,9 +24,9 @@ CREATE TABLE race (
   name TEXT NOT NULL,
   number INTEGER UNIQUE NOT NULL,
   venue TEXT NOT NULL,
-  distance TEXT NOT NULL,
-  type TEXT NOT NULL,
-  field TEXT NOT NULL,
+  distance TEXT,
+  type TEXT,
+  field TEXT,
   open INTEGER NOT NULL DEFAULT 0,
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
