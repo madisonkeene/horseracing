@@ -101,7 +101,7 @@ def user_delete(db_conn, db_curs, username):
 def user_reset_amount(db_conn, db_curs, username):
     try:
         db_curs.execute(
-            'UPDATE horseracing_user SET amount = %s WHERE username = %s', (10.0, username)
+            'UPDATE horseracing_user SET amount = %s WHERE username = %s', (100.0, username)
         )
         db_conn.commit()
     except psycopg2.Error as e:
