@@ -22,7 +22,6 @@
                     <th scope="col">Username</th>
                     <th scope="col">Amount</th>
                     <th scope="col">Created</th>
-                    <th>Delete</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,9 +31,6 @@
                         <td>{{ user['username'] }}</td>
                         <td>{{ user['amount'] }}</td>
                         <td>{{ user['created'] }}</td>
-                        <form name="delete_user" action="post">
-                            <td><button type="button" class="btn btn-primary" name="delete_{{ user['id'] }}">Delete</button></td>
-                        </form>
                     </tr>
                 {% endfor %}
             </tbody>
