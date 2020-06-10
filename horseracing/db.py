@@ -19,7 +19,7 @@ def get_db():
         url = urllib.parse.urlparse(uri)
         conn_string = "dbname=%s user=%s password=%s host=%s " % (url.path[1:], url.username, url.password, url.hostname)
 
-        g.db_conn = psycopg2.connect(conn_string, sslmode='require')
+        g.db_conn = psycopg2.connect(conn_string)#, sslmode='require')
         g.db_curs = g.db_conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     return g.db_conn, g.db_curs
