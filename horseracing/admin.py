@@ -103,7 +103,7 @@ def user_reset_amount(db_conn, db_curs, username):
             'UPDATE horseracing_user SET amount = %s WHERE username = %s', (10.0, username)
         )
         db_conn.commit()
-    except sqlite3.Error as e:
+    except psycopg2.Error as e:
         return render_template('admin/failure.html', message="Failed to modify user: %s" % e)
     return render_template('admin/success.html', message="User amount reset: %s" % username)
 

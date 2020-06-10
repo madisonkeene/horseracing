@@ -1,5 +1,4 @@
 from flask import Flask, g, redirect, url_for, render_template
-from flask_sqlalchemy import SQLAlchemy
 import os
 
 def create_app(test_config=None):
