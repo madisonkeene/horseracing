@@ -93,6 +93,7 @@ def user_delete(db_conn, db_curs, username):
         )
         db_conn.commit()
     except psycopg2.Error as e:
+        db_conn.rollback()
         return render_template('admin/failure.html', message="Failed to modify user: %s" % e)
     return render_template('admin/success.html', message="User deleted: %s" % username)
 
@@ -104,6 +105,7 @@ def user_reset_amount(db_conn, db_curs, username):
         )
         db_conn.commit()
     except psycopg2.Error as e:
+        db_conn.rollback()
         return render_template('admin/failure.html', message="Failed to modify user: %s" % e)
     return render_template('admin/success.html', message="User amount reset: %s" % username)
 
@@ -143,6 +145,7 @@ def add_results(race_number):
                 )
             db_conn.commit()
         except psycopg2.Error as e:
+            db_conn.rollback()
             return render_template('admin/failure.html', message="Failed to add results: %s" % e)
 
         err = calculate_and_store_bets(r['id'])

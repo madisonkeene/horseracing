@@ -38,6 +38,7 @@ def register():
             if error is None:
                 return redirect(url_for('index'))
         except psycopg2.Error as e:
+            db_conn.rollback()
             error = 'Something went wrong when doing database transactions: %s', e
 
         flash(error)

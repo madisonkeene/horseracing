@@ -1,7 +1,7 @@
-import functools
+import psycopg2
 
 from flask import (
-    Blueprint, flash, g, jsonify, redirect, render_template, request, session, url_for, abort
+    Blueprint, flash, g, redirect, render_template, request, url_for, abort
 )
 
 from urllib.parse import unquote
@@ -51,18 +51,21 @@ def bet():
             error = "You don't have enough money for this bet"
 
         if error is None:
-            db_curs.execute(
-                'INSERT INTO bet (horse_id, race_id, horseracing_user_id, amount, each_way) VALUES (%s, %s, %s, %s, %s)',
-                (horse_id, h['race_id'], g.user['id'], amount, eachway)
-            )
+            try:
+                db_curs.execute(
+                    'INSERT INTO bet (horse_id, race_id, horseracing_user_id, amount, each_way) VALUES (%s, %s, %s, %s, %s)',
+                    (horse_id, h['race_id'], g.user['id'], amount, eachway)
+                )
 
-            db_curs.execute(
-                'UPDATE horseracing_user SET amount = %s WHERE id = %s', (new_wallet, g.user['id'])
-            )
-            db_conn.commit()
+                db_curs.execute(
+                    'UPDATE horseracing_user SET amount = %s WHERE id = %s', (new_wallet, g.user['id'])
+                )
+                db_conn.commit()
 
-            return redirect(url_for('race.race', race_id=h['race_id']))
-
+                return redirect(url_for('race.race', race_id=h['race_id']))
+            except psycopg2.Error as e:
+                db_conn.rollback()
+                error="Error storing bet in database"
         flash(error)
 
     return render_template('bet/bet.html', horse=h)
@@ -82,14 +85,16 @@ def delete_bet(bet_id):
         abort(403)
 
     amount = g.user['amount'] + resolveStake(float(bet['amount']), bet['each_way'])
-
-    db_curs.execute(
-        'DELETE FROM bet WHERE id = %s', (bet['id'],)
-    )
-    db_curs.execute(
-        'UPDATE horseracing_user SET amount = %s WHERE id = %s', (amount, g.user['id'])
-    )
-    db_conn.commit()
+    try:
+        db_curs.execute(
+            'DELETE FROM bet WHERE id = %s', (bet['id'],)
+        )
+        db_curs.execute(
+            'UPDATE horseracing_user SET amount = %s WHERE id = %s', (amount, g.user['id'])
+        )
+        db_conn.commit()
+    except psycopg2.Error as e:
+        db_conn.rollback()
 
     return redirect(url_for('race.race', race_id=race_id))
 
