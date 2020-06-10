@@ -16,7 +16,7 @@ def init_app(app):
 
 def get_db():
     if 'db' not in g:
-        g.db_conn = psycopg2.connect(uri)
+        g.db_conn = psycopg2.connect(uri, sslmode='require')
         g.db_curs = g.db_conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     return g.db_conn, g.db_curs
