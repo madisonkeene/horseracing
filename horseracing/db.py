@@ -6,13 +6,17 @@ from flask.cli import with_appcontext
 
 from horseracing.data_loading import loadRaceInfo, loadAdminConfig
 
+uri = ''
+
 def init_app(app):
+    uri = app.config['DATABASE_URI']
+    print(uri)
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
 
 def get_db():
     if 'db' not in g:
-        g.db_conn = psycopg2.connect("dbname=horseracing_dev")
+        g.db_conn = psycopg2.connect(uri)
         g.db_curs = g.db_conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     return g.db_conn, g.db_curs
