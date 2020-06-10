@@ -8,7 +8,6 @@ def create_app(test_config=None):
 
     app.config.from_mapping(
         SECRET_KEY='dev',
-        DATABASE_URI=os.environ['DATABASE_URL'],
     )
 
     if test_config is None:

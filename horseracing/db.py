@@ -1,4 +1,5 @@
 import click
+import os
 import psycopg2
 import psycopg2.extras
 import urllib.parse
@@ -7,15 +8,13 @@ from flask.cli import with_appcontext
 
 from horseracing.data_loading import loadRaceInfo, loadAdminConfig
 
-uri = ''
 
 def init_app(app):
-    uri = app.config['DATABASE_URI']
-    print(uri)
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
 
 def get_db():
+    uri = os.environ['DATABASE_URL']
     if 'db' not in g:
         url = urllib.parse.urlparse(uri)
         conn_string = "dbname=%s user=%s password=%s host=%s " % (url.path[1:], url.username, url.password, url.hostname)
