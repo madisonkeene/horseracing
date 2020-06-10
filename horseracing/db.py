@@ -39,8 +39,8 @@ def init_db():
         db_curs.execute(f.read().decode('utf8'))
         db_conn.commit()
 
-    loadRaceInfo("config/racenight.json", db_conn, db_curs)
-    loadAdminConfig("config/config.example.json", db_conn, db_curs)
+    loadRaceInfo(os.environ['HR_RACE_CONFIG_FILENAME'], db_conn, db_curs)
+    loadAdminConfig(os.environ['HR_ADMIN_USER'], os.environ['HR_ADMIN_PWD'], db_conn, db_curs)
 
 
 @click.command('init-db')

@@ -2,17 +2,12 @@ import json
 
 from werkzeug.security import generate_password_hash
 
-def loadAdminConfig(filepath, db_conn, db_curs):
-    with open(filepath) as json_file:
-        data = json.load(json_file)
-        username = data['adminInfo']['username']
-        password = data['adminInfo']['password']
-
-        db_curs.execute(
-            'INSERT INTO horseracing_admin (username, password) VALUES (%s, %s)',
-            (username, generate_password_hash(password))
-        )
-        db_conn.commit()
+def loadAdminConfig(username, password, db_conn, db_curs):
+    db_curs.execute(
+        'INSERT INTO horseracing_admin (username, password) VALUES (%s, %s)',
+        (username, generate_password_hash(password))
+    )
+    db_conn.commit()
 
 def loadRaceInfo(filepath, db_conn, db_curs):
     with open(filepath) as json_file:
